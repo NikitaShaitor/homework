@@ -2,14 +2,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayToList {
-    public ArrayToList(String[] stringArray) {
-
-    }
-
     public static void main(String[] args) {
-        String[] stringArray = {"Apple", "Banan", "Cherry"};
-        ArrayList<String> fruitList = new ArrayList<>(List.of(stringArray));
-        fruitList.add("Pineapple");
-        System.out.println(fruitList);
+        String[] array = {"Apple", "Banana", "Chery"};
+        List<String> immutableList = List.of(array);
+        ArrayList<String> mutableList = new ArrayList<>(immutableList);
+
+        System.out.println(mutableList);
     }
 }
