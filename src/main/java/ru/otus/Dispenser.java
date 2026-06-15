@@ -1,14 +1,14 @@
 package ru.otus;
 
-import javafx.scene.control.Cell;
+import java.util.Collection;
 import java.util.Optional;
 
 public interface Dispenser {
-    void addCell(ru.otus.Cell cell);
-
     void addCell(Cell cell);
 
-    Optional<ru.otus.Cell> getCell(int nominal);
+    Optional<Cell> getCell(int nominal);
+
+    Collection<Cell> getCells();
 
     int getTotalAmount();
 }
