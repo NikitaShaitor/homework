@@ -43,38 +43,52 @@ public class Atm {
         return dispenser.getTotalAmount();
     }
 
+    private boolean findCombination(List<Cell> cells, int amountLeft, Map<Integer, Integer> currentPlan) {
+        if (amountLeft == 0) {
+            return true;
+        }
 
-    private WithdrawalResult calculateWithdrawalPlan(int remainingAmount) {
-        Map<Integer, Integer> plan = new LinkedHashMap<>();
-        int amountLeft = remainingAmount;
-
-        List<Cell> sortedCells = new ArrayList<>(dispenser.getCells());
-        sortedCells.sort(Comparator.comparingInt(Cell::getNominal).reversed());
-
-        for (Cell cell : sortedCells) {
+        for (int i = 0; i < cells.size(); i++) {
+            Cell cell = cells.get(i);
             int nominal = cell.getNominal();
-            int availableCount = cell.getAvailableCount();
 
-            if (availableCount == 0 || nominal > amountLeft) {
+            if (nominal > amountLeft || cell.getAvailableCount() == 0) {
                 continue;
             }
 
-            int neededBills = amountLeft / nominal;
-            int billsToWithdraw = Math.min(neededBills, availableCount);
+            int maxBillsToTake = Math.min(amountLeft / nominal, cell.getAvailableCount());
 
-            if (billsToWithdraw > 0) {
-                plan.put(nominal, billsToWithdraw);
-                amountLeft -= billsToWithdraw * nominal;
-            }
+            for (int billsToTake = maxBillsToTake; billsToTake > 0; billsToTake--) {
+                int takenSum = billsToTake * nominal;
 
-            if (amountLeft == 0) {
-                break;
+                currentPlan.put(nominal, billsToTake);
+                cell.withdraw(billsToTake);
+
+                if (findCombination(cells, amountLeft - takenSum, currentPlan)) {
+                    return true;
+                }
+
+                cell.deposit(billsToTake);
+                currentPlan.remove(nominal);
             }
         }
+        return false;
+    }
 
-        return amountLeft == 0 ?
-                new WithdrawalResult(plan) :
-                new WithdrawalResult("Невозможно выдать сумму " + remainingAmount + ". Не хватает купюр нужного номинала.");
+
+    private WithdrawalResult calculateWithdrawalPlan(int remainingAmount) {
+        List<Cell> cellsCopy = new ArrayList<>();
+        for (Cell cell : dispenser.getCells()) {
+            Cell copy = new Cell(cell.getNominal());
+            copy.deposit(cell.getAvailableCount());
+            cellsCopy.add(copy);
+        }
+
+        Map<Integer, Integer> plan = new LinkedHashMap<>();
+        boolean success = findCombination(cellsCopy, remainingAmount, plan);
+
+        return success ? new WithdrawalResult(plan) :
+                new WithdrawalResult("Невозможно выдать сумму " + remainingAmount + ". Не хватает комбинации купюр.");
     }
 
     private void executeWithdrawalPlan(Map<Integer, Integer> plan) {
