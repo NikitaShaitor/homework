@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Новый клиент</title>
+</head>
+<body>
+<h1>Создание нового клиента</h1>
+
+<form action="#" th:action="@{/admin/clients}" th:object="${client}" method="post">
+    <div>
+        <label for="name">Имя:</label><br/>
+        <input type="text" id="name" th:field="*{name}" required/><br/>
+    </div>
+    <button type="submit">Сохранить</button>
+</form>
+
+<p><a th:href="@{/admin/clients}">Отмена / Назад к списку</a></p>
+</body>
+</html>

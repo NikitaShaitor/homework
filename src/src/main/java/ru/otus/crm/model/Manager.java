@@ -1,9 +1,22 @@
 package ru.otus.crm.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+@Table("managers")
 public class Manager {
+
+    @Id
     private Long no;
+
+    @Column("label")
     private String label;
+
+    @Column("param1")
     private String param1;
+
+    public Manager() {}
 
     public Manager(String label) {
         this.label = label;
@@ -41,6 +54,9 @@ public class Manager {
 
     @Override
     public String toString() {
-        return "Manager{" + "no=" + no + ", label='" + label + '\'' + '}';
+        return "Manager{" +
+                "no=" + no +
+                ", label='" + label + '\'' +
+                '}';
     }
 }
