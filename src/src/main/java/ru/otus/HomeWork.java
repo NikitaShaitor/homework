@@ -24,33 +24,7 @@ public class HomeWork {
     public static void main(String[] args) {
         var dataSource = new DriverManagerDataSource(URL, USER, PASSWORD);
         flywayMigrations(dataSource);
-        var transactionRunner = new TransactionRunnerJdbc(dataSource);
-        var dbExecutor = new DbExecutorImpl();
-
-        EntityClassMetaData<Client> entityClassMetaDataClient = new EntityClassMetaDataImpl<>(Client.class);
-        EntitySQLMetaData entitySQLMetaDataClient = new EntitySQLMetaDataImpl<>(entityClassMetaDataClient);
-        var dataTemplateClient = new DataTemplateJdbc<>(dbExecutor, entitySQLMetaDataClient, entityClassMetaDataClient);
-
-        var dbServiceClient = new DbServiceClientImpl(transactionRunner, dataTemplateClient);
-        dbServiceClient.saveClient(new Client("dbServiceFirst"));
-
-        var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));
-        var clientSecondSelected = dbServiceClient
-                .getClient(clientSecond.getId())
-                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecond.getId()));
-        log.info("clientSecondSelected:{}", clientSecondSelected);
-
-        EntityClassMetaData<Manager> entityClassMetaDataManager = new EntityClassMetaDataImpl<>(Manager.class);
-        EntitySQLMetaData entitySQLMetaDataManager = new EntitySQLMetaDataImpl<>(entityClassMetaDataManager);
-        var dataTemplateManager = new DataTemplateJdbc<>(dbExecutor, entitySQLMetaDataManager, entityClassMetaDataManager);
-
-        var dbServiceManager = new DbServiceManagerImpl(transactionRunner, dataTemplateManager);
-
-        var managerSecond = dbServiceManager.saveManager(new Manager("ManagerSecond"));
-        var managerSecondSelected = dbServiceManager
-                .getManager(managerSecond.getNo())
-                .orElseThrow(() -> new RuntimeException("Manager not found, id:" + managerSecond.getNo()));
-        log.info("managerSecondSelected:{}", managerSecondSelected);
+        log.info("База данных подготовлена.");
     }
 
     private static void flywayMigrations(DataSource dataSource) {
